@@ -1,3 +1,8 @@
+#Render can't use your .pkl files because they're in .gitignore. We need to retrain models on startup instead. Create backend/startup.py:
+
+
+
+
 import os
 import joblib
 import pandas as pd
