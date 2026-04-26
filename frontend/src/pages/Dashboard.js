@@ -150,15 +150,10 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import { getStats, getHistory } from '../api';
-// import {
-//   LineChart, Line, XAxis, YAxis, CartesianGrid,
-//   Tooltip, ReferenceLine, ResponsiveContainer,
-//   Area, AreaChart, Legend
-// } from 'recharts';
 import {
   XAxis, YAxis, CartesianGrid,
   Tooltip, ReferenceLine, ResponsiveContainer,
-  Area, AreaChart,
+  Area, AreaChart, Line, LineChart,
 } from 'recharts';
 
 export default function Dashboard() {
