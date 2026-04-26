@@ -1,7 +1,3 @@
-
-// database password : Data-Pass@2026
-
-
 # AI Healthcare Prediction & Monitoring System
 
 A full-stack, production-grade healthcare AI web application that predicts risk for **Diabetes**, **Breast Cancer**, and **Heart Disease** using machine learning — with explainable AI (SHAP), personalized health tips, PDF report generation, and a complete user dashboard.
