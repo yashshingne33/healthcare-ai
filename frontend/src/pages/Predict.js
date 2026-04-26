@@ -243,17 +243,32 @@ export default function Predict() {
 
 
   // download button in react 
+  // const downloadReport = async (predictionId) => {
+  // const token = localStorage.getItem('token');
+  // const res = await fetch(
+  //     `http://127.0.0.1:8000/predict/report/${predictionId}`,
+  //     { headers: { Authorization: `Bearer ${token}` } }
+  //   );
+  // const blob = await res.blob();
+  // const url  = window.URL.createObjectURL(blob);
+  // const a    = document.createElement('a');
+  //   a.href     = url;
+  //   a.download = `healthai_report.pdf`;
+  //   a.click();
+  //   window.URL.revokeObjectURL(url);
+  // };
   const downloadReport = async (predictionId) => {
-  const token = localStorage.getItem('token');
-  const res = await fetch(
-      `http://127.0.0.1:8000/predict/report/${predictionId}`,
+    const token   = localStorage.getItem('token');
+    const baseUrl = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8000';
+    const res     = await fetch(
+      `${baseUrl}/predict/report/${predictionId}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
-  const blob = await res.blob();
-  const url  = window.URL.createObjectURL(blob);
-  const a    = document.createElement('a');
+    const blob = await res.blob();
+    const url  = window.URL.createObjectURL(blob);
+    const a    = document.createElement('a');
     a.href     = url;
-    a.download = `healthai_report.pdf`;
+    a.download = 'healthai_report.pdf';
     a.click();
     window.URL.revokeObjectURL(url);
   };
@@ -330,9 +345,6 @@ export default function Predict() {
                 <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: '1rem' }}>Top risk factors (AI explanation)</h3>
                 <ShapChart factors={result.top_risk_factors} />
               </div>
-
-
-
 
               {/* benchmark ui */}
               {result?.benchmark && (
@@ -438,14 +450,6 @@ export default function Predict() {
                   </div>
                 </div>
               )}
-
-
-
-
-
-
-
-
 
               <div style={{ background: '#fff', borderRadius: 12, padding: '1.5rem', border: '0.5px solid #e5e7eb' }}>
                 <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: '1rem' }}>Health recommendations</h3>

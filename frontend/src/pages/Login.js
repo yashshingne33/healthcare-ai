@@ -246,7 +246,7 @@ export default function Login() {
             }}>{error}</div>
           )}
 
-          <button onClick={submit} disabled={loading} style={{
+          {/* <button onClick={submit} disabled={loading} style={{
             width: '100%', padding: '13px', borderRadius: 10, border: 'none',
             background: loading
               ? '#9ca3af'
@@ -255,6 +255,14 @@ export default function Login() {
             letterSpacing: '0.01em'
           }}>
             {loading ? 'Please wait...' : isLogin ? 'Sign In' : 'Create Account'}
+          </button> */}
+
+          <button onClick={submit} disabled={loading} style={{
+            width: '100%', padding: '13px', borderRadius: 10, border: 'none',
+            background: loading ? '#9ca3af' : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+            color: '#fff', fontSize: 15, fontWeight: 600,
+          }}>
+            {loading ? 'Connecting to server... (may take 30s on first load)' : isLogin ? 'Sign In' : 'Create Account'}
           </button>
 
           <div style={{

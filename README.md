@@ -320,6 +320,13 @@ npm start
 That's it. Both run together, every single time.
 
 
+# push commands
+cd C:\Users\yashs\healthcare-ai
+git add .
+git commit -m "-----"
+git push
+
+
 
 # This is genuinely major-level work. Let's recap what's fully built so far:
 Phase 1 — 3 ML models trained with SHAP explainability
