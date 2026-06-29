@@ -1,17 +1,16 @@
 import os
-import base64
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import (
-    Mail, Attachment, FileContent, FileName,
-    FileType, Disposition
-)
+import smtplib
+from email.message import EmailMessage
 from dotenv import load_dotenv
 
 load_dotenv()
 
-SENDGRID_API_KEY  = os.getenv("SENDGRID_API_KEY")
-SENDGRID_FROM     = os.getenv("SENDGRID_FROM_EMAIL")
 
+EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
+EMAIL_APP_PASSWORD = os.getenv("EMAIL_APP_PASSWORD")
+
+print("Email:", EMAIL_ADDRESS)
+print("Password Loaded:", bool(EMAIL_APP_PASSWORD))
 
 def send_report_email(
     to_email:    str,
@@ -95,27 +94,42 @@ def send_report_email(
     """
 
     # Attach PDF
-    encoded_pdf = base64.b64encode(pdf_bytes).decode()
-    attachment  = Attachment(
-        FileContent(encoded_pdf),
-        FileName(f"healthai_{disease}_report.pdf"),
-        FileType("application/pdf"),
-        Disposition("attachment")
+    message = EmailMessage()
+
+    message["Subject"] = subject
+    message["From"] = EMAIL_ADDRESS
+    message["To"] = to_email
+
+    # Plain text fallback
+    message.set_content(
+        f"Hello {user_name},\n\n"
+        "Your HealthAI report is attached as a PDF.\n\n"
+        "Please use an HTML-compatible email client to view the formatted version."
     )
 
-    message = Mail(
-        from_email=SENDGRID_FROM,
-        to_emails=to_email,
-        subject=subject,
-        html_content=html_content
+    # HTML version
+    message.add_alternative(html_content, subtype="html")
+
+    # PDF Attachment
+    message.add_attachment(
+        pdf_bytes,
+        maintype="application",
+        subtype="pdf",
+        filename=f"healthai_{disease}_report.pdf"
     )
-    message.attachment = attachment
+    
 
     try:
-        sg  = SendGridAPIClient(SENDGRID_API_KEY)
-        res = sg.send(message)
-        print(f"Email sent to {to_email} — status: {res.status_code}")
-        return res.status_code in [200, 201, 202]
+      with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
+        smtp.starttls()
+        smtp.login(EMAIL_ADDRESS, EMAIL_APP_PASSWORD)
+        smtp.send_message(message)
+
+      print(f"✅ Email sent successfully to {to_email}")
+      return True
+
     except Exception as e:
-        print(f"Email error: {e}")
-        return False
+      print(f"❌ Email Error: {e}")
+      return False
+
+    

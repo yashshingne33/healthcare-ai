@@ -186,6 +186,10 @@ async def email_report(prediction_id: str, user=Depends(get_current_user)):
     """
     Generates PDF report and emails it to the user.
     """
+
+    print("\n========== EMAIL REPORT ==========")
+    print("Prediction ID:", prediction_id)
+    print("User Email:", user["email"])
     db = get_db()
 
     resp = db.table("predictions").select("*").eq("id", prediction_id).execute()
@@ -194,10 +198,13 @@ async def email_report(prediction_id: str, user=Depends(get_current_user)):
 
     rec = resp.data[0]
 
+    print("Prediction found in database")
+
     if rec["user_id"] != str(user["id"]):
         raise HTTPException(status_code=403, detail="Access denied")
 
     # Generate PDF
+    print("Generating PDF...")
     pdf_bytes = generate_pdf_report(
         user_name=       user["name"],
         user_email=      user["email"],
@@ -211,8 +218,11 @@ async def email_report(prediction_id: str, user=Depends(get_current_user)):
         health_tips=     rec.get("health_tips") or [],
         input_data=      rec.get("input_data") or {},
     )
+    print("PDF generated successfully")
+    print("PDF Size:", len(pdf_bytes))
 
     # Send email
+    print("Calling send_report_email()")
     success = send_report_email(
         to_email=    user["email"],
         user_name=   user["name"],
@@ -221,6 +231,8 @@ async def email_report(prediction_id: str, user=Depends(get_current_user)):
         probability= rec["probability"],
         pdf_bytes=   pdf_bytes,
     )
+
+    print("Email send result:", success)
 
     if not success:
         raise HTTPException(status_code=500, detail="Failed to send email")
