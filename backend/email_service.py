@@ -1,5 +1,6 @@
 import os
 import smtplib
+import socket
 from email.message import EmailMessage
 from dotenv import load_dotenv
 
@@ -11,6 +12,11 @@ EMAIL_APP_PASSWORD = os.getenv("EMAIL_APP_PASSWORD")
 
 print("Email:", EMAIL_ADDRESS)
 print("Password Loaded:", bool(EMAIL_APP_PASSWORD))
+
+try:
+    print("SMTP IP:", socket.gethostbyname("smtp.gmail.com"))
+except Exception as e:
+    print("DNS Error:", e)
 
 def send_report_email(
     to_email:    str,
@@ -120,16 +126,25 @@ def send_report_email(
     
 
     try:
-      with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
-        smtp.starttls()
-        smtp.login(EMAIL_ADDRESS, EMAIL_APP_PASSWORD)
-        smtp.send_message(message)
+        print("Opening SMTP connection...")
 
-      print(f"✅ Email sent successfully to {to_email}")
-      return True
+        with smtplib.SMTP("smtp.gmail.com", 587, timeout=20) as smtp:
+
+            print("Connected to SMTP server")
+
+            smtp.starttls()
+            print("TLS started")
+
+            smtp.login(EMAIL_ADDRESS, EMAIL_APP_PASSWORD)
+            print("Login successful")
+
+            smtp.send_message(message)
+            print("Email sent successfully")
+
+        print(f"✅ Email sent successfully to {to_email}")
+        return True
 
     except Exception as e:
-      print(f"❌ Email Error: {e}")
-      return False
-
+        print("❌ Email Error:", repr(e))
+        return False
     
